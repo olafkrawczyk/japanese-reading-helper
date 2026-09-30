@@ -1,4 +1,5 @@
 .jrh-gap { margin-left: .4em; }
+.jrh-clause::after { content: ''; display: inline-block; vertical-align: middle; margin-left: .4em; width: 1px; height: .9em; background: currentColor; opacity: .4; }
 .jrh-p { color: var(--jrh-user, #c2410c); text-decoration: underline dotted; text-underline-offset: .2em; }
 jrh-s[data-dark] .jrh-p { color: var(--jrh-user, #fdba74); }
 jrh-w { cursor: pointer; }

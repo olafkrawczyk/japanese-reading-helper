@@ -25,7 +25,17 @@ function furigana(surface, reading) {
   return parts.map((p, i) => [p, KANJI.test(p) ? m[i + 1] : null]);
 }
 
-if (typeof module === 'object') { module.exports = { startsChunk, furigana, toHira }; return; }
+const PARTICLES = {
+  'は': 'topic', 'が|格助詞': 'subject', 'が|接続助詞': 'but', 'が': 'subject', 'を': 'object',
+  'に': 'target / time / place of existence', 'で': 'place of action / means', 'で|接続助詞': 'and then (te-form)', 'へ': 'direction',
+  'と': 'and / with / quote', 'と|接続助詞': 'when / if', 'の': "possessive / linking ('s)", 'も': 'also',
+  'から|格助詞': 'from', 'から|接続助詞': 'because', 'から': 'from', 'まで': 'until / up to', 'より': 'than / from',
+  'や': 'and (non-exhaustive)', 'か': 'question', 'ね': 'seeking agreement', 'よ': 'assertion',
+  'けど': 'but', 'けれど': 'but', 'ので': 'because', 'て': 'and then (connects actions)', 'ば': 'if', 'たり': 'listing actions',
+};
+const particleGloss = t => PARTICLES[`${t.surface_form}|${t.pos_detail_1}`] ?? PARTICLES[t.surface_form] ?? null;
+
+if (typeof module === 'object') { module.exports = { startsChunk, furigana, toHira, particleGloss }; return; }
 if (window.__jrh) return;
 
 let tokenizerP, io;
@@ -73,8 +83,11 @@ function processGroup(block, nodes, tk) {
     while (ti < tokens.length && tokens[ti].start < ne) {
       const t = tokens[ti], s = Math.max(t.start, ns), e = Math.min(t.end, ne);
       const w = document.createElement('jrh-w');
-      w.className = (t.gap && s === t.start ? 'jrh-gap ' : '') + (t.pos === '助詞' ? 'jrh-p' : '');
+      w.className = (t.gap && s === t.start ? 'jrh-gap ' : '') + (t.pos === '助詞' ? 'jrh-p' : '') +
+        (t.pos_detail_1 === '接続助詞' && tokens[ti + 1]?.gap ? ' jrh-clause' : '');
       w.dataset.b = t.basic_form !== '*' ? t.basic_form : t.surface_form;
+      const g = t.pos === '助詞' && particleGloss(t);
+      if (g) w.dataset.g = g;
       // ponytail: tokens crossing element boundaries get no generated furigana; rare, would need cross-node ruby.
       if (!inRuby && s === t.start && e === t.end) {
         for (const [txt, rt] of furigana(t.surface_form, t.reading)) {
@@ -152,27 +165,28 @@ document.addEventListener('click', e => {
 // Long hover → first jisho result (fetched via background: jisho API has no CORS).
 const tip = document.createElement('jrh-tip');
 let timer, hovered;
+const show = (w, ...nodes) => {
+  tip.replaceChildren(...nodes);
+  const r = w.getBoundingClientRect();
+  tip.style.left = scrollX + r.left + 'px';
+  tip.style.top = scrollY + r.bottom + 4 + 'px';
+  document.body.append(tip);
+};
 document.addEventListener('mouseover', e => {
   const w = e.target.closest?.('jrh-w');
   if (w === hovered || e.target.closest?.('jrh-tip')) return;
   hovered = w; clearTimeout(timer);
   if (!w) return tip.remove();
+  const b = document.createElement('b');
+  if (w.dataset.g) { b.textContent = w.textContent; return show(w, b, ' ' + w.dataset.g); }
   timer = setTimeout(async () => {
     const d = await chrome.runtime.sendMessage({ lookup: w.dataset.b }).catch(() => null);
     if (hovered !== w) return;
-    tip.replaceChildren();
-    if (!d) tip.append('No result');
-    else {
-      const h = document.createElement('b');
-      h.textContent = d.word + (d.reading !== d.word ? ` 【${d.reading}】` : '');
-      const ol = document.createElement('ol');
-      for (const s of d.senses) ol.appendChild(document.createElement('li')).textContent = s;
-      tip.append(h, ol);
-    }
-    const r = w.getBoundingClientRect();
-    tip.style.left = scrollX + r.left + 'px';
-    tip.style.top = scrollY + r.bottom + 4 + 'px';
-    document.body.append(tip);
+    if (!d) return show(w, 'No result');
+    b.textContent = d.word + (d.reading !== d.word ? ` 【${d.reading}】` : '');
+    const ol = document.createElement('ol');
+    for (const s of d.senses) ol.appendChild(document.createElement('li')).textContent = s;
+    show(w, b, ol);
   }, 600);
 });
 
