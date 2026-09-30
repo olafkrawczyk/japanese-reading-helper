@@ -33,7 +33,22 @@ const PARTICLES = {
   'や': 'and (non-exhaustive)', 'か': 'question', 'ね': 'seeking agreement', 'よ': 'assertion',
   'けど': 'but', 'けれど': 'but', 'ので': 'because', 'て': 'and then (connects actions)', 'ば': 'if', 'たり': 'listing actions',
 };
-const particleGloss = t => PARTICLES[`${t.surface_form}|${t.pos_detail_1}`] ?? PARTICLES[t.surface_form] ?? null;
+// Context from neighbours where kuromoji's tags make it reliable. ponytail: で place-vs-means needs meaning, not tags.
+function particleGloss(t, prev, next) {
+  const f = t.surface_form;
+  if (f === 'に' && t.pos_detail_1 === '格助詞') {
+    if (prev?.pos === '動詞') return 'purpose (to go/come to do)';
+    if (prev?.pos_detail_1 === '副詞可能' || prev?.pos_detail_2 === '助数詞') return 'time (at / on)';
+    if (next?.basic_form === 'なる') return 'result (becomes)';
+    if (['ある', 'いる'].includes(next?.basic_form)) return 'location (exists at)';
+  }
+  if (t.pos_detail_1 === '終助詞') {
+    if (f === 'よ' && next?.surface_form === 'ね') return 'assertion + agreement (…right?)';
+    if (f === 'ね') return 'seeking agreement (…right? / isn\'t it)';
+    if (f === 'よ') return 'telling new info (I tell you)';
+  }
+  return PARTICLES[`${f}|${t.pos_detail_1}`] ?? PARTICLES[f] ?? null;
+}
 
 if (typeof module === 'object') { module.exports = { startsChunk, furigana, toHira, particleGloss }; return; }
 if (window.__jrh) return;
@@ -86,7 +101,7 @@ function processGroup(block, nodes, tk) {
       w.className = (t.gap && s === t.start ? 'jrh-gap ' : '') + (t.pos === '助詞' ? 'jrh-p' : '') +
         (t.pos_detail_1 === '接続助詞' && tokens[ti + 1]?.gap ? ' jrh-clause' : '');
       w.dataset.b = t.basic_form !== '*' ? t.basic_form : t.surface_form;
-      const g = t.pos === '助詞' && particleGloss(t);
+      const g = t.pos === '助詞' && particleGloss(t, tokens[ti - 1], tokens[ti + 1]);
       if (g) w.dataset.g = g;
       // ponytail: tokens crossing element boundaries get no generated furigana; rare, would need cross-node ruby.
       if (!inRuby && s === t.start && e === t.end) {

@@ -18,6 +18,14 @@ require('kuromoji').builder({ dicPath: 'node_modules/kuromoji/dict' }).build((er
   assert.strictEqual(chunks('私は学校に行きました。'), '私は/学校に/行きました。');
   assert.strictEqual(chunks('東京都知事が勉強しています'), '東京都知事が/勉強しています');
   assert.strictEqual(chunks('「日本」でご飯を食べた'), '「日本」で/ご飯を/食べた');
+  const gl = (str, f) => { const a = tk.tokenize(str), i = a.findIndex(t => t.surface_form === f); return particleGloss(a[i], a[i - 1], a[i + 1]); };
+  assert.match(gl('月曜日に行く', 'に'), /time/);
+  assert.match(gl('3時に起きた', 'に'), /time/);
+  assert.match(gl('部屋にいる', 'に'), /location/);
+  assert.match(gl('先生になる', 'に'), /becomes/);
+  assert.match(gl('食べに行く', 'に'), /purpose/);
+  assert.match(gl('友達に会う', 'に'), /target/);
+  assert.match(gl('そうだよね', 'よ'), /agreement/);
   const a = tk.tokenize('雨が降ったので、家にいた'), i = a.findIndex(t => t.surface_form === 'ので');
   assert.strictEqual(a[i].pos_detail_1, '接続助詞');
   assert.strictEqual(startsChunk(a[i + 1], a[i]), false); // 、 attaches, so no jrh-clause here
