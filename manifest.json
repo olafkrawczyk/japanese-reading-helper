@@ -4,6 +4,7 @@
   "version": "0.1.0",
   "description": "Splits Japanese text into phrases, highlights particles, shows furigana on hover.",
   "permissions": ["activeTab", "scripting", "contextMenus", "storage"],
+  "host_permissions": ["https://jisho.org/api/*"],
   "background": { "service_worker": "background.js" },
   "action": { "default_popup": "popup.html", "default_title": "Japanese Reading Helper" },
   "web_accessible_resources": [{ "resources": ["dict/*.gz"], "matches": ["<all_urls>"] }]

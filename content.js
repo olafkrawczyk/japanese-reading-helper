@@ -149,5 +149,32 @@ document.addEventListener('click', e => {
   open('https://jisho.org/search/' + encodeURIComponent(w.dataset.b), '_blank', 'noopener');
 });
 
+// Long hover → first jisho result (fetched via background: jisho API has no CORS).
+const tip = document.createElement('jrh-tip');
+let timer, hovered;
+document.addEventListener('mouseover', e => {
+  const w = e.target.closest?.('jrh-w');
+  if (w === hovered || e.target.closest?.('jrh-tip')) return;
+  hovered = w; clearTimeout(timer);
+  if (!w) return tip.remove();
+  timer = setTimeout(async () => {
+    const d = await chrome.runtime.sendMessage({ lookup: w.dataset.b }).catch(() => null);
+    if (hovered !== w) return;
+    tip.replaceChildren();
+    if (!d) tip.append('No result');
+    else {
+      const h = document.createElement('b');
+      h.textContent = d.word + (d.reading !== d.word ? ` 【${d.reading}】` : '');
+      const ol = document.createElement('ol');
+      for (const s of d.senses) ol.appendChild(document.createElement('li')).textContent = s;
+      tip.append(h, ol);
+    }
+    const r = w.getBoundingClientRect();
+    tip.style.left = scrollX + r.left + 'px';
+    tip.style.top = scrollY + r.bottom + 4 + 'px';
+    document.body.append(tip);
+  }, 600);
+});
+
 window.__jrh = { run };
 })();

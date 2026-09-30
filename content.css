@@ -9,3 +9,10 @@ jrh-w { cursor: pointer; }
 .jrh-on ruby:hover rt, jrh-w:hover rt { visibility: visible; }
 
 .jrh-pick { outline: 2px dashed #c2410c !important; outline-offset: 2px; }
+
+jrh-tip {
+  position: absolute; z-index: 2147483647; max-width: 320px; padding: 6px 10px;
+  font: 14px/1.4 system-ui, sans-serif; color: #111; background: #fff;
+  border: 1px solid #999; border-radius: 6px; box-shadow: 0 2px 8px #0003;
+}
+jrh-tip ol { margin: 4px 0 0; padding-left: 1.4em; }
