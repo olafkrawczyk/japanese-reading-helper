@@ -32,7 +32,7 @@ let tokenizerP, io;
 const tokenizer = () => tokenizerP ||= new Promise((res, rej) =>
   kuromoji.builder({ dicPath: chrome.runtime.getURL('dict/') }).build((e, t) => e ? rej(e) : res(t)));
 
-const SKIP = 'script,style,noscript,textarea,input,select,rt,rp,code,pre,svg,[contenteditable],.jrh';
+const SKIP = 'script,style,noscript,textarea,input,select,button,[role=button],rt,rp,code,pre,svg,[contenteditable],jrh-s';
 const blockOf = el => {
   while (el.parentElement && ['inline', 'ruby', 'ruby-base', 'contents'].includes(getComputedStyle(el).display)) el = el.parentElement;
   return el;
@@ -67,14 +67,13 @@ function processGroup(block, nodes, tk) {
   let ti = 0, ns = 0;
   for (const node of nodes) {
     const ne = ns + node.data.length, inRuby = !!node.parentElement.closest('ruby');
-    const wrap = document.createElement('span');
-    wrap.className = 'jrh';
+    const wrap = document.createElement('jrh-s');
     if (dark) wrap.dataset.dark = '';
     wrap._jrhOrig = node;
     while (ti < tokens.length && tokens[ti].start < ne) {
       const t = tokens[ti], s = Math.max(t.start, ns), e = Math.min(t.end, ne);
-      const w = document.createElement('span');
-      w.className = 'jrh-w' + (t.gap && s === t.start ? ' jrh-gap' : '') + (t.pos === '助詞' ? ' jrh-p' : '');
+      const w = document.createElement('jrh-w');
+      w.className = (t.gap && s === t.start ? 'jrh-gap ' : '') + (t.pos === '助詞' ? 'jrh-p' : '');
       w.dataset.b = t.basic_form !== '*' ? t.basic_form : t.surface_form;
       // ponytail: tokens crossing element boundaries get no generated furigana; rare, would need cross-node ruby.
       if (!inRuby && s === t.start && e === t.end) {
@@ -116,7 +115,7 @@ async function start(root, filter) {
 
 function stop() {
   io?.disconnect(); io = null;
-  document.querySelectorAll('span.jrh').forEach(s => s.replaceWith(s._jrhOrig));
+  document.querySelectorAll('jrh-s').forEach(s => s.replaceWith(s._jrhOrig));
   document.documentElement.classList.remove('jrh-on');
 }
 
@@ -145,7 +144,7 @@ async function run(mode) {
 }
 
 document.addEventListener('click', e => {
-  const w = e.target.closest?.('.jrh-w');
+  const w = e.target.closest?.('jrh-w');
   if (!w || e.target.closest('a') || !getSelection().isCollapsed) return;
   open('https://jisho.org/search/' + encodeURIComponent(w.dataset.b), '_blank', 'noopener');
 });
