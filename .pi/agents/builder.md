@@ -1,7 +1,7 @@
 ---
 name: builder
 description: Implements a single, precisely-scoped change end to end. Writes code, runs node --check and npm test, reports the diff.
-model: 9router/cc/claude-sonnet-4-5-20250929
+model: 9router/opus-combo
 thinking: medium
 tools: read, write, edit, grep, find, ls, bash
 ---

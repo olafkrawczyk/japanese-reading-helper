@@ -1,7 +1,7 @@
 ---
 name: visionary
 description: Invents feature ideas for this app — proposes what to build and why, never implements.
-model: 9router/cc/claude-opus-5
+model: 9router/opus-combo
 thinking: high
 tools: read, grep, find, ls
 subagent_agents: scout

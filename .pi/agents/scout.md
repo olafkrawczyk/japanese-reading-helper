@@ -1,7 +1,7 @@
 ---
 name: scout
 description: Reads the codebase and reports back on exactly what it was asked to find. Read-only.
-model: 9router/cc/claude-haiku-4-5-20251001
+model: 9router/opus-combo
 thinking: low
 tools: read, grep, find, ls
 ---
