@@ -1,0 +1,11 @@
+.jrh-gap { margin-left: .4em; }
+.jrh-p { color: var(--jrh-user, #c2410c); text-decoration: underline dotted; text-underline-offset: .2em; }
+.jrh[data-dark] .jrh-p { color: var(--jrh-user, #fdba74); }
+.jrh-w { cursor: pointer; }
+
+/* Furigana (ours and the site's) hidden until hover; never copied. */
+.jrh-on rt { visibility: hidden; user-select: none; }
+.jrh-on rp { display: none; }
+.jrh-on ruby:hover rt, .jrh-w:hover rt { visibility: visible; }
+
+.jrh-pick { outline: 2px dashed #c2410c !important; outline-offset: 2px; }

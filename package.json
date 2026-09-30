@@ -1,0 +1,15 @@
+{
+  "name": "japanese-reading-helper",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "vendor": "mkdir -p lib dict && cp node_modules/kuromoji/dict/*.gz dict/ && sed -E 's/path\\.join\\(dic_path, ([^)]*)\\)/dic_path + \\1/g' node_modules/kuromoji/build/kuromoji.js > lib/kuromoji.js",
+    "test": "node test.js"
+  },
+  "keywords": [],
+  "type": "commonjs",
+  "devDependencies": {
+    "kuromoji": "^0.1.2"
+  },
+  "private": true
+}
