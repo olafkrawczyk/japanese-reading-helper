@@ -2,10 +2,41 @@
   "manifest_version": 3,
   "name": "Japanese Reading Helper",
   "version": "0.1.0",
-  "description": "Splits Japanese text into phrases, highlights particles, shows furigana on hover.",
-  "permissions": ["activeTab", "scripting", "contextMenus", "storage"],
-  "host_permissions": ["https://jisho.org/api/*"],
-  "background": { "service_worker": "background.js" },
-  "action": { "default_popup": "popup.html", "default_title": "Japanese Reading Helper" },
-  "web_accessible_resources": [{ "resources": ["dict/*.gz"], "matches": ["<all_urls>"] }]
+  "description": "Breaks Japanese sentences into phrases, highlights particles, shows furigana and meanings on hover.",
+  "permissions": [
+    "activeTab",
+    "scripting",
+    "contextMenus",
+    "storage"
+  ],
+  "host_permissions": [
+    "https://jisho.org/api/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Japanese Reading Helper",
+    "default_icon": {
+      "16": "icons/16.png",
+      "48": "icons/48.png",
+      "128": "icons/128.png"
+    }
+  },
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "dict/*.gz"
+      ],
+      "matches": [
+        "<all_urls>"
+      ]
+    }
+  ],
+  "icons": {
+    "16": "icons/16.png",
+    "48": "icons/48.png",
+    "128": "icons/128.png"
+  }
 }
