@@ -5,7 +5,7 @@ jrh-s[data-dark] .jrh-p { color: var(--jrh-user, #fdba74); }
 jrh-w { cursor: pointer; }
 
 /* Furigana (ours and the site's) hidden until hover; never copied. */
-.jrh-on rt { visibility: hidden; user-select: none; }
+.jrh-on rt { visibility: hidden; user-select: none; font-size: max(.7em, 12px) !important; font-weight: 600; }
 .jrh-on rp { display: none; }
 .jrh-on ruby:hover rt, jrh-w:hover rt { visibility: visible; }
 
