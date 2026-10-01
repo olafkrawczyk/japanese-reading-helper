@@ -53,7 +53,7 @@ function particleGloss(t, prev, next) {
 if (typeof module === 'object') { module.exports = { startsChunk, furigana, toHira, particleGloss }; return; }
 if (window.__jrh) return;
 
-let tokenizerP, io;
+let tokenizerP, io, mo;
 const tokenizer = () => tokenizerP ||= new Promise((res, rej) =>
   kuromoji.builder({ dicPath: chrome.runtime.getURL('dict/') }).build((e, t) => e ? rej(e) : res(t)));
 
@@ -137,12 +137,20 @@ async function start(root, filter) {
       for (const b of visible) processGroup(b, io.groups.get(b) || [], tk), io.groups.delete(b);
     } finally { document.documentElement.style.cursor = ''; }
   }, { rootMargin: '300px' });
-  io.groups = new Map([...(io.groups || []), ...groups]);
-  groups.forEach((_, b) => io.observe(b));
+  const queue = groups => { for (const [b, n] of groups) io.groups.set(b, n), io.observe(b); };
+  io.groups ||= new Map();
+  queue(groups);
+  // Frameworks (React etc.) re-render text on scroll, dropping our wrappers. Rescan changed areas;
+  // collect() skips already-wrapped text, so our own mutations find nothing new.
+  let t;
+  (mo ||= new MutationObserver(() => { clearTimeout(t); t = setTimeout(() => mo.roots.forEach(([r, f]) => queue(collect(r, f))), 200); })).roots ||= [];
+  mo.roots.push([root, filter]);
+  mo.observe(root, { childList: true, subtree: true, characterData: true });
 }
 
 function stop() {
   io?.disconnect(); io = null;
+  mo?.disconnect(); mo = null;
   document.querySelectorAll('jrh-s').forEach(s => s.replaceWith(s._jrhOrig));
   document.documentElement.classList.remove('jrh-on');
 }
