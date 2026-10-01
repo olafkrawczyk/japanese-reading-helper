@@ -157,15 +157,16 @@ function stop() {
 
 const pick = () => new Promise(res => {
   let cur;
-  const over = e => { cur?.classList.remove('jrh-pick'); (cur = e.target).classList.add('jrh-pick'); };
+  // mousemove, not mouseover: after the popup closes the pointer is already inside an element, so mouseover wouldn't fire.
+  const over = e => { if (e.target === cur) return; cur?.classList.remove('jrh-pick'); (cur = e.target).classList.add('jrh-pick'); };
   const done = e => {
     if (e.type === 'keydown' && e.key !== 'Escape') return;
     e.preventDefault(); e.stopPropagation();
     cur?.classList.remove('jrh-pick');
-    removeEventListener('mouseover', over, true); removeEventListener('click', done, true); removeEventListener('keydown', done, true);
+    removeEventListener('mousemove', over, true); removeEventListener('click', done, true); removeEventListener('keydown', done, true);
     res(e.type === 'click' ? e.target : null);
   };
-  addEventListener('mouseover', over, true); addEventListener('click', done, true); addEventListener('keydown', done, true);
+  addEventListener('mousemove', over, true); addEventListener('click', done, true); addEventListener('keydown', done, true);
 });
 
 async function run(mode) {
