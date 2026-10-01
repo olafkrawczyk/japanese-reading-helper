@@ -36,7 +36,7 @@ Runs only when you use it, only on that tab. Text is analysed locally; only the 
 **Data usage:** tick nothing in the data-type list. Certify all three statements (no selling, no unrelated use, no creditworthiness).
 The hovered word is sent to jisho.org to fetch its meaning. It is not linked to the user and not stored by the extension.
 
-**Privacy policy URL:** link to the README's Privacy section (e.g. on GitHub), or publish the text below as a gist:
+**Privacy policy URL:** https://github.com/olafkrawczyk/japanese-reading-helper#privacy
 
 > Japanese Reading Helper does not collect, store or share personal data. Page text is analysed locally in your browser. When you hold the mouse on a word, that word alone is sent to jisho.org to retrieve its dictionary entry. Your color setting is saved in Chrome sync storage. Nothing else leaves your browser.
 
