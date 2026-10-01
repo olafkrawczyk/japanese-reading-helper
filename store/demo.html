@@ -1,0 +1,20 @@
+<!doctype html><meta charset=utf-8>
+<style>
+body{margin:0;width:1280px;height:800px;font-family:'Hiragino Sans',sans-serif;background:#f6f7f9;color:#1f2328}
+.card{margin:70px auto 0;width:1040px;background:#fff;border-radius:14px;padding:44px 56px;box-shadow:0 2px 12px #0001}
+h1{font-size:34px;margin:0 0 28px}p{font-size:30px;line-height:2.3;margin:0}
+.show jrh-r::before{visibility:visible!important}
+</style>
+<div class=card><h1>東京で桜が咲きました</h1>
+<p>今年は暖かい日が多かったので、東京では先週から桜が咲き始めました。公園には朝から多くの人が来て、写真を撮っていました。</p></div>
+<script>chrome={runtime:{getURL:p=>'/'+p,sendMessage:async()=>null},storage:{sync:{get:async()=>({})}}}</script>
+<script src=/lib/kuromoji.js></script><script src=/content.js></script>
+<script>
+const st=document.createElement('link');st.rel='stylesheet';st.href='/content.css';document.head.append(st);
+__jrh.run('page');
+setTimeout(()=>{const ws=[...document.querySelectorAll('p jrh-w')];
+ws.find(w=>w.textContent==='暖かい')?.classList.add('show');
+ws.find(w=>w.textContent==='桜')?.classList.add('show');
+const p=ws.find(w=>w.textContent==='から'&&w.dataset.g);
+p.dispatchEvent(new MouseEvent('mouseover',{bubbles:true}));},3000);
+</script>

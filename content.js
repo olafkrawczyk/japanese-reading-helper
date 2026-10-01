@@ -107,9 +107,10 @@ function processGroup(block, nodes, tk) {
       if (!inRuby && s === t.start && e === t.end) {
         for (const [txt, rt] of furigana(t.surface_form, t.reading)) {
           if (!rt) { w.append(txt); continue; }
-          const r = document.createElement('ruby'), rtEl = document.createElement('rt');
-          rtEl.textContent = rt;
-          r.append(txt, rtEl);
+          // Not <ruby>: a hidden <rt> still widens its base (東京 → 東 京). Overlay takes no space.
+          const r = document.createElement('jrh-r');
+          r.dataset.rt = rt;
+          r.textContent = txt;
           w.append(r);
         }
       } else w.textContent = node.data.slice(s - ns, e - ns);
