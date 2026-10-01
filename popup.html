@@ -1,15 +1,40 @@
 <!doctype html>
 <meta charset="utf-8">
+<meta name="color-scheme" content="light dark">
 <style>
-  body { font: 14px system-ui; width: 190px; margin: 10px; }
-  button { display: block; width: 100%; margin-bottom: 6px; padding: 6px; }
-  label { display: flex; align-items: center; gap: 6px; margin-top: 8px; }
-  p { color: #666; font-size: 12px; }
+  :root { --accent: #c2410c; --bg: #fff; --fg: #1f2328; --muted: #6b7280; --line: #e5e7eb; --hover: #fff7ed; }
+  @media (prefers-color-scheme: dark) {
+    :root { --accent: #fdba74; --bg: #1f2328; --fg: #f3f4f6; --muted: #9ca3af; --line: #374151; --hover: #2d2620; }
+  }
+  body { width: 240px; margin: 0; font: 13px/1.4 system-ui, sans-serif; background: var(--bg); color: var(--fg); }
+  header { display: flex; align-items: center; gap: 8px; padding: 12px 14px; border-bottom: 1px solid var(--line); font-weight: 600; }
+  header img { width: 20px; height: 20px; }
+  .actions { padding: 6px; }
+  button {
+    display: flex; align-items: center; gap: 10px; width: 100%; padding: 8px 10px;
+    border: 0; border-radius: 8px; background: none; color: inherit; font: inherit; text-align: left; cursor: pointer;
+  }
+  button:hover, button:focus-visible { background: var(--hover); outline: none; }
+  button:focus-visible { box-shadow: inset 0 0 0 2px var(--accent); }
+  button span { width: 18px; text-align: center; color: var(--accent); }
+  button small { display: block; color: var(--muted); font-size: 11px; }
+  button[data-mode="off"] span { color: var(--muted); }
+  .settings { display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; border-top: 1px solid var(--line); }
+  .settings label { display: flex; align-items: center; gap: 6px; cursor: pointer; }
+  input[type="color"] { width: 26px; height: 26px; padding: 0; border: 1px solid var(--line); border-radius: 6px; background: none; cursor: pointer; }
+  input[type="checkbox"] { accent-color: var(--accent); margin: 0; }
+  footer { padding: 8px 14px 12px; color: var(--muted); font-size: 11px; }
+  kbd { font: inherit; padding: 0 4px; border: 1px solid var(--line); border-radius: 4px; }
 </style>
-<button data-mode="pick">Pick area</button>
-<button data-mode="page">Whole page</button>
-<button data-mode="off">Turn off</button>
-<label>Particle color <input type="color" id="color"></label>
-<label><input type="checkbox" id="auto"> Automatic</label>
-<p>Tip: select text → right-click → “Break down Japanese”.</p>
+<header><img src="icons/48.png" alt="">Japanese Reading Helper</header>
+<div class="actions">
+  <button data-mode="pick"><span aria-hidden="true">⌖</span><div>Pick area<small>Click the article to read</small></div></button>
+  <button data-mode="page"><span aria-hidden="true">▤</span><div>Whole page<small>Everything on this tab</small></div></button>
+  <button data-mode="off"><span aria-hidden="true">✕</span><div>Turn off<small>Restore the page</small></div></button>
+</div>
+<div class="settings">
+  <label for="color">Particle color <input type="color" id="color"></label>
+  <label><input type="checkbox" id="auto"> Auto</label>
+</div>
+<footer>Or select text, right-click,<br>then <kbd>Break down Japanese</kbd></footer>
 <script src="popup.js"></script>
